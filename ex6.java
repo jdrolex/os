@@ -1,106 +1,123 @@
 // Ex : 6
 /**************************************************************************************************************** */
 // Bankers Algoritham 
-// import java.util.*;
+import java.util.*;
 
-// public class BankersAlgorithm {
-//     private int[][] max;
-//     private int[][] allocation;
-//     private int[][] need;
-//     private int[] available;
-//     private boolean[] finish;
-//     private int[] safeSequence;
+public class BankersAlgorithm {
+    private int[][] max;
+    private int[][] allocation;
+    private int[][] need;
+    private int[] available;
+    private boolean[] finish;
+    private int[] safeSequence;
 
-//     public BankersAlgorithm(int[][] max, int[][] allocation, int[] available) {
-//         this.max = max;
-//         this.allocation = allocation;
-//         this.available = available;
-//         this.finish = new boolean[max.length];
-//         this.safeSequence = new int[max.length];
-//         this.calculateNeed();
-//     }
+    public BankersAlgorithm(int[][] max, int[][] allocation, int[] available) {
+        this.max = max;
+        this.allocation = allocation;
+        this.available = available;
+        this.finish = new boolean[max.length];
+        this.safeSequence = new int[max.length];
+        this.calculateNeed();
+    }
 
-//     private void calculateNeed() {
-//         need = new int[max.length][max[0].length];
-//         for (int i = 0; i < max.length; i++) {
-//             for (int j = 0; j < max[i].length; j++) {
-//                 need[i][j] = max[i][j] - allocation[i][j];
-//             }
-//         }
-//     }
+    private void calculateNeed() {
+        need = new int[max.length][max[0].length];
+        for (int i = 0; i < max.length; i++) {
+            for (int j = 0; j < max[i].length; j++) {
+                need[i][j] = max[i][j] - allocation[i][j];
+            }
+        }
+    }
 
-//     public boolean isSafe() {
-//         int[] work = Arrays.copyOf(available, available.length);
-//         for (int i = 0; i < finish.length; i++) {
-//             finish[i] = false;
-//         }
+    public boolean isSafe() {
+        int[] work = Arrays.copyOf(available, available.length);
+        for (int i = 0; i < finish.length; i++) {
+            finish[i] = false;
+        }
 
-//         int count = 0;
-//         while (count < finish.length) {
-//             boolean found = false;
-//             for (int i = 0; i < finish.length; i++) {
-//                 if (!finish[i]) {
-//                     int j;
-//                     for (j = 0; j < work.length; j++) {
-//                         if (need[i][j] > work[j]) {
-//                             break;
-//                         }
-//                     }
-//                     if (j == work.length) {
-//                         for (int k = 0; k < work.length; k++) {
-//                             work[k] += allocation[i][k];
-//                         }
-//                         safeSequence[count++] = i;
-//                         finish[i] = true;
-//                         found = true;
-//                     }
-//                 }
-//             }
-//             if (!found) {
-//                 break;
-//             }
-//         }
+        int count = 0;
+        while (count < finish.length) {
+            boolean found = false;
+            for (int i = 0; i < finish.length; i++) {
+                if (!finish[i]) {
+                    int j;
+                    for (j = 0; j < work.length; j++) {
+                        if (need[i][j] > work[j]) {
+                            break;
+                        }
+                    }
+                    if (j == work.length) {
+                        for (int k = 0; k < work.length; k++) {
+                            work[k] += allocation[i][k];
+                        }
+                        safeSequence[count++] = i;
+                        finish[i] = true;
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                break;
+            }
+        }
 
-//         return count == finish.length;
-//     }
+        return count == finish.length;
+    }
 
-//     public int[] getSafeSequence() {
-//         return safeSequence;
-//     }
+    public int[] getSafeSequence() {
+        return safeSequence;
+    }
 
-//     public static void main(String[] args) {
-//         int[][] max = {
-//             {7, 5, 3},
-//             {3, 2, 2},
-//             {9, 0, 2},
-//             {2, 2, 2},
-//             {4, 3, 3}
-//         };
-//         int[][] allocation = {
-//             {0, 1, 0},
-//             {2, 0, 0},
-//             {3, 0, 2},
-//             {2, 1, 1},
-//             {0, 0, 2}
-//         };
-//         int[] available = {3, 3, 2};
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-//         BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(max, allocation, available);
-//         if (bankersAlgorithm.isSafe()) {
-//             System.out.println("Safe sequence:");
-//             int[] safeSequence = bankersAlgorithm.getSafeSequence();
-//             for (int i = 0; i < safeSequence.length; i++) {
-//                 System.out.print("P" + safeSequence[i]);
-//                 if (i < safeSequence.length - 1) {
-//                     System.out.print(" -> ");
-//                 }
-//             }
-//             System.out.println();
-//         } else {
-//             System.out.println("System is in unsafe state.");
-//         }
-//     }
-// }
+        System.out.print("Enter the number of processes: ");
+        int n = scanner.nextInt();
+        System.out.print("Enter the number of resources: ");
+        int m = scanner.nextInt();
+
+        int[][] max = new int[n][m];
+        int[][] allocation = new int[n][m];
+        int[] available = new int[m];
+
+        System.out.println("Enter the maximum resource matrix:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                max[i][j] = scanner.nextInt();
+            }
+        }
+
+        System.out.println("Enter the allocation matrix:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                allocation[i][j] = scanner.nextInt();
+            }
+        }
+
+        System.out.println("Enter the available resources:");
+        for (int i = 0; i < m; i++) {
+            available[i] = scanner.nextInt();
+        }
+
+        BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(max, allocation, available);
+        if (bankersAlgorithm.isSafe()) {
+            System.out.println("Safe sequence:");
+            int[] safeSequence = bankersAlgorithm.getSafeSequence();
+            for (int i = 0; i < safeSequence.length; i++) {
+                System.out.print("P" + safeSequence[i]);
+                if (i < safeSequence.length - 1) {
+                    System.out.print(" -> ");
+                }
+            }
+            System.out.println();
+        } else {
+            System.out.println("System is in unsafe state.");
+        }
+
+        scanner.close();
+    }
+}
+
 
 
 
