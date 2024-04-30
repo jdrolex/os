@@ -189,3 +189,57 @@ int main()
      
     return 0;
 }
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main() {
+    int fd1[2], fd2[2];
+    pid_t p;
+    char buffer[100];
+
+    // Create first pipe
+    if (pipe(fd1) == -1) {
+        perror("pipe");
+        return 1;
+    }
+
+    // Create second pipe
+    if (pipe(fd2) == -1) {
+        perror("pipe");
+        return 1;
+    }
+
+    p = fork();
+    if (p < 0) {
+        perror("fork");
+        return 1;
+    }
+
+    if (p > 0) { // Parent process
+        close(fd1[0]); // Close read end of first pipe
+        close(fd2[1]); // Close write end of second pipe
+        
+        printf("Parent passing value to child\n");
+        write(fd1[1], "hello\n", 6); // Write to first pipe
+
+        printf("Parent waiting for response from child\n");
+        read(fd2[0], buffer, sizeof(buffer)); // Read from second pipe
+        printf("Parent received response from child: %s\n", buffer);
+
+        wait(NULL);
+    } else { // Child process
+        close(fd1[1]); // Close write end of first pipe
+        close(fd2[0]); // Close read end of second pipe
+
+        read(fd1[0], buffer, sizeof(buffer)); // Read from first pipe
+        printf("Child received value from parent: %s", buffer);
+
+        printf("Child passing value to parent\n");
+        write(fd2[1], "world\n", 6); // Write to second pipe
+    }
+
+    return 0;
+}
